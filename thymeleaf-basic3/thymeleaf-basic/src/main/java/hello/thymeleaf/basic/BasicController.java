@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,19 +21,17 @@ public class BasicController {
 
     @GetMapping("text-basic")
     public String textBasic(Model model) {
-        model.addAttribute("data", "Hello <b>Spring!</b>");
-
+        model.addAttribute("data", "Hello Spring!");
         return "basic/text-basic";
     }
 
     @GetMapping("text-unescaped")
     public String textUnescaped(Model model) {
         model.addAttribute("data", "Hello <b>Spring!</b>");
-
         return "basic/text-unescaped";
     }
 
-    @GetMapping("variable")
+    @GetMapping("/variable")
     public String variable(Model model) {
         User userA = new User("userA", 10);
         User userB = new User("userB", 20);
@@ -52,17 +51,23 @@ public class BasicController {
         return "basic/variable";
     }
 
-    @GetMapping("basic-objects")
-    public String basicObjects(HttpSession session) {
+    @GetMapping("/basic-objects")
+    public String basicObjects(HttpSession session, HttpServletRequest request) {
         session.setAttribute("sessionData", "Hello Session");
         return "basic/basic-objects";
     }
 
-    @GetMapping("date")
-    public String data(Model model) {
-        model.addAttribute("localDateTime", LocalDateTime.now());
+    @Component("helloBean")
+    static class HelloBean{
+        public String hello(String data) {
+            return "Hello " + data;
+        }
+    }
 
-        return "basic/time";
+    @GetMapping("/date")
+    public String date(Model model) {
+        model.addAttribute("localDateTime", LocalDateTime.now());
+        return "basic/date";
     }
 
     @GetMapping("link")
@@ -73,10 +78,9 @@ public class BasicController {
         return "basic/link";
     }
 
-    @GetMapping("/literal")
+    @GetMapping("literal")
     public String literal(Model model) {
         model.addAttribute("data", "Spring!");
-
         return "basic/literal";
     }
 
@@ -88,53 +92,6 @@ public class BasicController {
         return "basic/operation";
     }
 
-    @GetMapping("/attribute")
-    public String attribute() {
-        return "basic/attribute";
-    }
-
-    @GetMapping("/each")
-    public String each(Model model) {
-        addUsers(model);
-
-        return "basic/each";
-    }
-
-    @GetMapping("/condition")
-    public String condition(Model model) {
-        addUsers(model);
-        return "basic/condition";
-    }
-
-    @GetMapping("/block")
-    public String block(Model model) {
-        addUsers(model);
-        return "basic/block";
-    }
-
-    @GetMapping("/javascript")
-    public String javascript(Model model) {
-        model.addAttribute("user", new User("UserA", 10));
-        addUsers(model);
-
-        return "basic/javascript";
-    }
-
-    private void addUsers(Model model) {
-        List<User> list = new ArrayList<>();
-        list.add(new User("UserA", 10));
-        list.add(new User("UserB", 20));
-        list.add(new User("userC", 30));
-
-        model.addAttribute("users", list);
-    }
-
-    @Component("helloBean")
-    static class HelloBean {
-        public String hello(String data) {
-            return "Hello  " + data;
-        }
-    }
 
     @Data
     static class User {
@@ -146,4 +103,30 @@ public class BasicController {
             this.age = age;
         }
     }
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
